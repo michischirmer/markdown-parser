@@ -8,21 +8,23 @@ lines = []
 list_start = False
 list_o_start = False
 quote_start = False
-linebreak = False
 for line in input_lines:
-	linebreak = False
+	toAdd = ''
+	wrapper = False
+
 	if not re.search(r'^(-|\*|\+).*', line):
 		if list_start:
-			lines.append('</ul>')
+			toAdd += '</ul>'
 		list_start = False
 
 	if not re.search(r'^(\>).*', line):
 		if quote_start:
-			lines.append('</blockquote>')
+			toAdd += '</blockquote>'
 		quote_start = False
+
 	if not re.search(r'^(\d*\.).*', line):
 		if list_o_start:
-			lines.append('</ol>')
+			toAdd += '</ol>'
 		list_o_start = False
 
 	# Headings
@@ -33,67 +35,69 @@ for line in input_lines:
 				break
 		line = re.sub(r'^#{' + str(count) + '} *', '<h' + str(count) + '>', line) + '</h' + str(count) + '>'
 		line = re.sub(r' *#+', '', line)
-		lines.append(line)
-		linebreak = False
+		toAdd += line
+
 	# Links
 	elif re.search(r'\[.+\]\(.+\)', line):
 		link = re.findall(r'\(.+\)', line)[0][1:-1]
 		anker = re.findall(r'\[.+\]', line)[0][1:-1]
-		lines.append(f'<a href="{link}">{anker}</a>')
-		if re.search(r'$', line):
-			linebreak = True
+		toAdd += f'<a href="{link}">{anker}</a>'
+		wrapper = True
+
 	# Bold Text
 	elif re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', line) or re.search(r'[(.^\*)*]\*{1}.+\*{1}[(.^\*)*]', line):
 		if re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', line):
 			text = re.sub(r'[_]','' , line)
 		else:
 			text = re.sub(r'[\*]','' , line)
-		lines.append(f'<strong>{text}</strong>')
-		if re.search(r'$', line):
-			linebreak = True
+		toAdd += f'<strong>{text}</strong>'
+		wrapper = True
+
 	# Emphasized Text
 	elif re.search(r'[.^_]*_{1,1}.+_{1,1}[.^_]*', line) or re.search(r'[.^\*]*\*{1,1}.+\*{1,1}[.^\*]*', line):
 		if re.search(r'[.^_]*_{1,1}.+_{1,1}[.^_]*', line):
 			text = re.sub(r'[_]','' , line)
 		else:
 			text = re.sub(r'[\*]','' , line)
-		lines.append(f'<em>{text}</em>')
-		if re.search(r'$', line):
-			linebreak = True
+		toAdd += f'<em>{text}</em>'
+		wrapper = True
+
 	# Inline Code
 	elif re.search(r'.*`.*`.*', line):
 		code = re.sub(r'`[.*`]', '</code>', line)
-		lines.append('<p>' + re.sub(r'`', '<code>', code) + '</p>')
-		if re.search(r'$', line):
-			linebreak = True
+		toAdd += re.sub(r'`', '<code>', code)
+		wrapper = True
+
 	# Unordered List
 	elif re.search(r'^(-|\*|\+).*', line):
 		if not list_start:
-			lines.append('<ul>')
+			toAdd += '<ul>'
 			list_start = True
-		lines.append(re.sub(r'[-|\*|\+] *', '<li>', line))
-		linebreak = False
+		toAdd += re.sub(r'[-|\*|\+] *', '<li>', line)
+
 	# Quote
 	elif re.search(r'^(\>).*', line):
 		if not quote_start:
-			lines.append('<blockquote>')
+			toAdd += '<blockquote>'
 			quote_start = True
-		lines.append(re.sub(r'[\>] *', '<p>', line) + '</p>')
-		linebreak = False
+		toAdd += re.sub(r'[\>] *', '', line)
+
 	# Ordered List
 	elif re.search(r'^(\d*\.).*', line):
 		if not list_o_start:
-			lines.append('<ol>')
+			toAdd += '<ol>'
 			list_o_start = True
-		lines.append(re.sub(r'(\d*\.) *', '<li>', line))
-		linebreak = False
+		toAdd += re.sub(r'(\d*\.) *', '<li>', line)
+
 	# Plain Text
 	elif line != '':
-		lines.append('<p>' + line + '</p>')
-		if re.search(r'$', line):
-			linebreak = True
+		toAdd += line
+		wrapper = True
 
-	if linebreak:
-		lines.append('<br>')
+	if toAdd != '' and wrapper:
+		lines.append('<p>' + toAdd + '</p>')
+	else:
+		lines.append(toAdd)
 
-print(''.join(lines))
+print('\n'.join(lines))
+
