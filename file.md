@@ -47,8 +47,13 @@ This will be a code ***block***:
 
 _Emphasized Text_ also *emphasized Text*
 
-__Strong Text__ also **strong Text**
+__Strong Text__ also **strong Text** and again _bebe_
 
 ***Strong and Emphasized Text***
 
 Some inline Code: `pip install regex`
+
+```
+pip install regex
+pip install flask
+```

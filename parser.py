@@ -105,7 +105,6 @@ def parse(input):
 		# Unordered List
 		if re.search(r'^(-|\+).*', line):
 			if not list_start:
-				print(line)
 				toAdd += '<ul>'
 				list_start = True
 			toAdd += re.sub(r'[-|\+] *', '<li>', line)
@@ -124,12 +123,9 @@ def parse(input):
 				list_o_start = True
 			toAdd += re.sub(r'(\d*\.) *', '<li>', line)
 
-		# Plain Text
-		#if line != '':
-		#	toAdd += line
-		#	wrapper = True
-
 		if toAdd != '' and wrapper:
+			while toAdd != inline_parse(toAdd):
+				toAdd = inline_parse(toAdd)
 			lines.append('<p>' + inline_parse(toAdd) + '</p>')
 		else:
 			lines.append(toAdd)
