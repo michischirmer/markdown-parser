@@ -56,10 +56,12 @@ for line in input_lines:
 	# Emphasized Text
 	elif re.search(r'[.^_]*_{1,1}.+_{1,1}[.^_]*', line) or re.search(r'[.^\*]*\*{1,1}.+\*{1,1}[.^\*]*', line):
 		if re.search(r'[.^_]*_{1,1}.+_{1,1}[.^_]*', line):
-			text = re.sub(r'[_]','' , line)
+			text = re.sub(r'[_]','<em>' , line, 1)
+			text = re.sub(r'[_]','</em>' , text, 1)
 		else:
-			text = re.sub(r'[\*]','' , line)
-		toAdd += f'<em>{text}</em>'
+			text = re.sub(r'[\*]','<em>' , line, 1)
+			text = re.sub(r'[\*]','</em>' , text, 1)
+		toAdd += text
 		wrapper = True
 
 	# Inline Code
@@ -100,4 +102,3 @@ for line in input_lines:
 		lines.append(toAdd)
 
 print('\n'.join(lines))
-

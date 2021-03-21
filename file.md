@@ -3,7 +3,7 @@
 ### An H3 Header
 #### An H4 Header
 
-> Of all the things I've lost 
+> Of all the things I've lost
 > I miss my mind the most. - Mark Twain
 
 ### Unordered List 1
@@ -31,7 +31,7 @@
 
 [Stack Abuse](http://stackabuse.com)
 
-_This is emphasized text!_
+Aha _This is emphasized text!_ Nice
 
 __This is strong text!__
 
