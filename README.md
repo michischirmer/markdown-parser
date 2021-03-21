@@ -48,7 +48,7 @@ Markup | HTML
 `##### Heading 5` | `<h5>Heading 5</h5>`
 `###### Heading 6` | `<h6>Heading 3</h6>`
 `> This is fun. - Me` | `<blockquote><p>This is fun. - Me</p></blockquote>`
-`* Item 1`<br>`- Item 2`<br>`+ Item 3` | `<ul>` <br> `<li>Item 1` <br> `<li>Item 2` <br> `<li>Item 3` <br> `</ul>`
+`+ Item 1`<br>`- Item 2`<br>`- Item 3` | `<ul>` <br> `<li>Item 1` <br> `<li>Item 2` <br> `<li>Item 3` <br> `</ul>`
 `1. Item 1`<br>`1. Item 2`<br>`1. Item 3` | `<ol>` <br> `<li>Item 1` <br> `<li>Item 2` <br> `<li>Item 3` <br> `</ol>`
 `[Stack Overflow](https://stackoverflow.com/)` | `<p><a href="https://stackoverflow.com/">Stack Overflow</a></p>`
 `_Emphasized Text_ also *emphasized Text*` | `<p><em>Emphasized Text</em> also *emphasized Text*</p>`
