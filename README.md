@@ -39,6 +39,8 @@ pip install regex
 
 # Behavior
 
+(See also the [Testfile](test/Testfile.md) in [test](test/) directory.)
+
 Markup | HTML
 ------------ | -------------
 `# Heading 1` | `<h1>Heading 1</h1>`
