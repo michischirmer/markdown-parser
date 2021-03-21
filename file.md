@@ -29,11 +29,11 @@
 910. Item 3
 
 
-[Stack Abuse](http://stackabuse.com)
+[Stack Abuse](http://stackabuse.com) Click here
 
 Aha _This is emphasized text!_ Nice
 
-__This is strong text!__
+Aha __This is strong text!__ Nice
 
 *This is emphasized text!*
 

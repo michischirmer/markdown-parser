@@ -41,16 +41,20 @@ for line in input_lines:
 	elif re.search(r'\[.+\]\(.+\)', line):
 		link = re.findall(r'\(.+\)', line)[0][1:-1]
 		anker = re.findall(r'\[.+\]', line)[0][1:-1]
-		toAdd += f'<a href="{link}">{anker}</a>'
+		prev = line[:line.find('[')]
+		after = line[line.find(')') + 1:]
+		toAdd += f'{prev}<a href="{link}">{anker}</a>{after}'
 		wrapper = True
 
 	# Bold Text
 	elif re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', line) or re.search(r'[(.^\*)*]\*{1}.+\*{1}[(.^\*)*]', line):
 		if re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', line):
-			text = re.sub(r'[_]','' , line)
+			text = re.sub(r'[_]','<strong>' , line, 2)
+			text = re.sub(r'[_]','</strong>' , text, 2)
 		else:
-			text = re.sub(r'[\*]','' , line)
-		toAdd += f'<strong>{text}</strong>'
+			text = re.sub(r'[\*]','<strong>' , line, 2)
+			text = re.sub(r'[\*]','</strong>' , text, 2)
+		toAdd += text
 		wrapper = True
 
 	# Emphasized Text
