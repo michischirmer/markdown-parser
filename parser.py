@@ -11,7 +11,7 @@ def parse(input):
 	list_start = False
 	list_o_start = False
 	quote_start = False
-	#code_block = False
+	code_block = False
 
 	for line in input_lines:
 		toAdd = ''
@@ -32,17 +32,13 @@ def parse(input):
 				toAdd += '</ol>'
 			list_o_start = False
 
-		#if code_block:
-		#	wrapper = False
-		
-		"""if re.search(r'^```$', line):
-			wrapper = False
+		if line == '```':
 			if code_block:
-				toAdd += '</code>'
 				code_block = False
+				toAdd += '</code>'
 			else:
+				code_block = True
 				toAdd += '<code>'
-				code_block = True"""
 
 		# Headings
 		if re.search(r'^#{1,6}', line): 
@@ -66,22 +62,28 @@ def parse(input):
 		# Bold and Italic Text
 		if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', line) or re.search(r'[(.^\*)*]\*{2}.+\*{2}[(.^\*)*]', line):
 			if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', line):
-				text = re.sub(r'[_]','<em><strong>' , line, 3)
-				text = re.sub(r'[_]','</em></strong>' , text, 3)
+				text = re.sub(r'[_]', '<em><strong>', line, 1)
+				text = re.sub(r'[_]', '', text, 4)
+				text = re.sub(r'[_]', '</em></strong>', text, 1)
 			else:
-				text = re.sub(r'[\*]','<em><strong>' , line, 3)
-				text = re.sub(r'[\*]','</em></strong>' , text, 3)
+				text = re.sub(r'[\*]', '<em><strong>', line, 1)
+				text = re.sub(r'[\*]', '', text, 4)
+				text = re.sub(r'[\*]', '</em></strong>', text, 1)
 			toAdd += text
 			wrapper = True
 
 		# Bold Text
 		elif re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', line) or re.search(r'[(.^\*)*]\*{1}.+\*{1}[(.^\*)*]', line):
 			if re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', line):
-				text = re.sub(r'[_]','<strong>' , line, 2)
-				text = re.sub(r'[_]','</strong>' , text, 2)
+				text = re.sub(r'[_]','<strong>' , line, 1)
+				text = re.sub(r'[_]','' , text, 1)
+				text = re.sub(r'[_]','</strong>' , text, 1)
+				text = re.sub(r'[_]','' , text, 1)
 			else:
-				text = re.sub(r'[\*]','<strong>' , line, 2)
-				text = re.sub(r'[\*]','</strong>' , text, 2)
+				text = re.sub(r'[\*]','<strong>' , line, 1)
+				text = re.sub(r'[\*]','' , text, 1)
+				text = re.sub(r'[\*]','</strong>' , text, 1)
+				text = re.sub(r'[\*]','' , text, 1)
 			toAdd += text
 			wrapper = True
 
@@ -97,11 +99,15 @@ def parse(input):
 			wrapper = True
 
 		# Inline Code
-		if re.search(r'.*`.*`.*', line):
-			code = re.sub(r'`[.*`]', '</code>', line)
-			toAdd += re.sub(r'`', '<code>', code)
+		if re.search(r'`.+`', line) and re.match(r'`.+`', line) is None:
+			code = re.sub(r'`', '<code>', line, 1)
+			toAdd += re.sub(r'`', '</code>', code, 1)
 			wrapper = True
+		
+		if re.search(r'`.+`', line) and re.match(r'`.+`', line) is not None:
+			code_block = True
 
+		
 		# Unordered List
 		if re.search(r'^(-|\+).*', line):
 			if not list_start:
@@ -127,8 +133,11 @@ def parse(input):
 			while toAdd != inline_parse(toAdd):
 				toAdd = inline_parse(toAdd)
 			lines.append('<p>' + inline_parse(toAdd) + '</p>')
+		elif code_block and line != '```':
+			lines.append('<p>' + line + '</p>')
 		else:
 			lines.append(toAdd)
+
 
 	output = '\n'.join(lines)
 	return output
@@ -198,14 +207,6 @@ def inline_parse(string):
 		case = False
 	
 	return toAdd if not case else string
-
-
-
-
-
-
-
-
 
 
 with open(sys.argv[1]) as file:
