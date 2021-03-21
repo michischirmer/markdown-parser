@@ -7,9 +7,9 @@
 > I miss my mind the most. - Mark Twain
 
 ### Unordered List 1
-* Item 1
-* Item 2
-* Item 3
+- Item 1
+- Item 2
+- Item 3
 
 ### Unordered List 2
 + Item 1
@@ -31,6 +31,8 @@
 
 [Stack Abuse](http://stackabuse.com) Click here
 
+[Stack Abuse](http://stackabuse.com)
+
 Aha _This is emphasized text!_ Nice
 
 Aha __This is strong text!__ Nice
@@ -42,8 +44,11 @@ Aha __This is strong text!__ Nice
 This is `inline code`.
 
 This will be a code ***block***:
-```
-for (int i = 0; i < 5; i++){
-	print(i)	
-}
-```
+
+_Emphasized Text_ also *emphasized Text*
+
+__Strong Text__ also **strong Text**
+
+***Strong and Emphasized Text***
+
+Some inline Code: `pip install regex`

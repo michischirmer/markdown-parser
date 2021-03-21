@@ -11,7 +11,7 @@ def parse(input):
 	list_start = False
 	list_o_start = False
 	quote_start = False
-	code_block = False
+	#code_block = False
 
 	for line in input_lines:
 		toAdd = ''
@@ -32,17 +32,17 @@ def parse(input):
 				toAdd += '</ol>'
 			list_o_start = False
 
-		if code_block:
-			wrapper = False
+		#if code_block:
+		#	wrapper = False
 		
-		if re.search(r'^```$', line):
+		"""if re.search(r'^```$', line):
 			wrapper = False
 			if code_block:
 				toAdd += '</code>'
 				code_block = False
 			else:
 				toAdd += '<code>'
-				code_block = True
+				code_block = True"""
 
 		# Headings
 		if re.search(r'^#{1,6}', line): 
@@ -55,7 +55,7 @@ def parse(input):
 			toAdd += line
 
 		# Links
-		elif re.search(r'\[.+\]\(.+\)', line):
+		if re.search(r'\[.+\]\(.+\)', line):
 			link = re.findall(r'\(.+\)', line)[0][1:-1]
 			anker = re.findall(r'\[.+\]', line)[0][1:-1]
 			prev = line[:line.find('[')]
@@ -64,7 +64,7 @@ def parse(input):
 			wrapper = True
 
 		# Bold and Italic Text
-		elif re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', line) or re.search(r'[(.^\*)*]\*{2}.+\*{2}[(.^\*)*]', line):
+		if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', line) or re.search(r'[(.^\*)*]\*{2}.+\*{2}[(.^\*)*]', line):
 			if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', line):
 				text = re.sub(r'[_]','<em><strong>' , line, 3)
 				text = re.sub(r'[_]','</em></strong>' , text, 3)
@@ -97,44 +97,119 @@ def parse(input):
 			wrapper = True
 
 		# Inline Code
-		elif re.search(r'.*`.*`.*', line):
+		if re.search(r'.*`.*`.*', line):
 			code = re.sub(r'`[.*`]', '</code>', line)
 			toAdd += re.sub(r'`', '<code>', code)
 			wrapper = True
 
 		# Unordered List
-		elif re.search(r'^(-|\*|\+).*', line):
+		if re.search(r'^(-|\+).*', line):
 			if not list_start:
+				print(line)
 				toAdd += '<ul>'
 				list_start = True
-			toAdd += re.sub(r'[-|\*|\+] *', '<li>', line)
+			toAdd += re.sub(r'[-|\+] *', '<li>', line)
 
 		# Quote
-		elif re.search(r'^(\>).*', line):
+		if re.search(r'^(\>).*', line):
 			if not quote_start:
 				toAdd += '<blockquote><p>'
 				quote_start = True
 			toAdd += re.sub(r'[\>] *', '', line)
 
 		# Ordered List
-		elif re.search(r'^(\d*\.).*', line):
+		if re.search(r'^(\d*\.).*', line):
 			if not list_o_start:
 				toAdd += '<ol>'
 				list_o_start = True
 			toAdd += re.sub(r'(\d*\.) *', '<li>', line)
 
 		# Plain Text
-		elif line != '':
-			toAdd += line
-			wrapper = True
+		#if line != '':
+		#	toAdd += line
+		#	wrapper = True
 
 		if toAdd != '' and wrapper:
-			lines.append('<p>' + toAdd + '</p>')
+			lines.append('<p>' + inline_parse(toAdd) + '</p>')
 		else:
 			lines.append(toAdd)
 
 	output = '\n'.join(lines)
 	return output
+
+
+def inline_parse(string):
+	toAdd = ''
+	case = True
+
+	# Headings
+	if re.search(r'^#{1,6}', string): 
+		for i in [6,5,4,3,2,1]:
+			if re.search(r'^#{' + str(i) + r'}', string):
+				count = i
+				break
+		line = re.sub(r'^#{' + str(count) + '} *', '<h' + str(count) + '>', string) + '</h' + str(count) + '>'
+		string = re.sub(r' *#+', '', string)
+		toAdd += string
+		case = False
+
+	# Links
+	if re.search(r'\[.+\]\(.+\)', string):
+		link = re.findall(r'\(.+\)', string)[0][1:-1]
+		anker = re.findall(r'\[.+\]', string)[0][1:-1]
+		prev = string[:string.find('[')]
+		after = string[string.find(')') + 1:]
+		toAdd += f'{prev}<a href="{link}">{anker}</a>{after}'
+		case = False
+
+	# Bold and Italic Text
+	if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', string) or re.search(r'[(.^\*)*]\*{2}.+\*{2}[(.^\*)*]', string):
+		if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', string):
+			text = re.sub(r'[_]','<em><strong>' , string, 3)
+			text = re.sub(r'[_]','</em></strong>' , text, 3)
+		else:
+			text = re.sub(r'[\*]','<em><strong>' , string, 3)
+			text = re.sub(r'[\*]','</em></strong>' , text, 3)
+		toAdd += text
+		case = False
+
+	# Bold Text
+	elif re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', string) or re.search(r'[(.^\*)*]\*{1}.+\*{1}[(.^\*)*]', string):
+		if re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', string):
+			text = re.sub(r'[_]','<strong>' , string, 2)
+			text = re.sub(r'[_]','</strong>' , text, 2)
+		else:
+			text = re.sub(r'[\*]','<strong>' , string, 2)
+			text = re.sub(r'[\*]','</strong>' , text, 2)
+		toAdd += text
+		case = False
+
+	# Emphasized Text
+	elif re.search(r'[.^_]*_{1,1}.+_{1,1}[.^_]*', string) or re.search(r'[.^\*]*\*{1,1}.+\*{1,1}[.^\*]*', string):
+		if re.search(r'[.^_]*_{1,1}.+_{1,1}[.^_]*', string):
+			text = re.sub(r'[_]','<em>' , string, 1)
+			text = re.sub(r'[_]','</em>' , text, 1)
+		else:
+			text = re.sub(r'[\*]','<em>' , string, 1)
+			text = re.sub(r'[\*]','</em>' , text, 1)
+		toAdd += text
+		case = False
+
+	# Inline Code
+	if re.search(r'.*`.*`.*', string):
+		code = re.sub(r'`[.*`]', '</code>', string)
+		toAdd += re.sub(r'`', '<code>', code)
+		case = False
+	
+	return toAdd if not case else string
+
+
+
+
+
+
+
+
 
 
 with open(sys.argv[1]) as file:
