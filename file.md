@@ -40,3 +40,10 @@ Aha __This is strong text!__ Nice
 **This is strong text!**
 
 This is `inline code`.
+
+This will be a code ***block***:
+```
+for (int i = 0; i < 5; i++){
+	print(i)	
+}
+```

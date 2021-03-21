@@ -6,13 +6,14 @@ if len(sys.argv) < 2 or len(sys.argv) > 3:
 	exit(1)
 
 with open(sys.argv[1]) as file:
-	input = file.read()
-	input_lines = input.splitlines()
+	input_lines = file.read().splitlines()
 
 lines = []
 list_start = False
 list_o_start = False
 quote_start = False
+code_block = False
+
 for line in input_lines:
 	toAdd = ''
 	wrapper = False
@@ -32,6 +33,18 @@ for line in input_lines:
 			toAdd += '</ol>'
 		list_o_start = False
 
+	if code_block:
+		wrapper = False
+	
+	if re.search(r'^```$', line):
+		wrapper = False
+		if code_block:
+			toAdd += '</code>'
+			code_block = False
+		else:
+			toAdd += '<code>'
+			code_block = True
+
 	# Headings
 	if re.search(r'^#{1,6}', line): 
 		for i in [6,5,4,3,2,1]:
@@ -49,6 +62,17 @@ for line in input_lines:
 		prev = line[:line.find('[')]
 		after = line[line.find(')') + 1:]
 		toAdd += f'{prev}<a href="{link}">{anker}</a>{after}'
+		wrapper = True
+
+	# Bold and Italic Text
+	elif re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', line) or re.search(r'[(.^\*)*]\*{2}.+\*{2}[(.^\*)*]', line):
+		if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', line):
+			text = re.sub(r'[_]','<em><strong>' , line, 3)
+			text = re.sub(r'[_]','</em></strong>' , text, 3)
+		else:
+			text = re.sub(r'[\*]','<em><strong>' , line, 3)
+			text = re.sub(r'[\*]','</em></strong>' , text, 3)
+		toAdd += text
 		wrapper = True
 
 	# Bold Text
