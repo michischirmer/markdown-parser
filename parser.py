@@ -201,10 +201,10 @@ def inline_parse(string):
 		case = False
 
 	# Inline Code
-	if re.search(r'.*`.*`.*', string):
-		code = re.sub(r'`[.*`]', '</code>', string)
-		toAdd += re.sub(r'`', '<code>', code)
-		case = False
+	if re.search(r'`.+`', string) and re.match(r'`.+`', string) is None:
+			code = re.sub(r'`', '<code>', string, 1)
+			toAdd += re.sub(r'`', '</code>', code, 1)
+			case = False
 	
 	return toAdd if not case else string
 

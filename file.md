@@ -41,7 +41,7 @@ Aha __This is strong text!__ Nice
 
 **This is strong text!**
 
-This is `inline code`.
+This is `inline code` and another `inline`.
 
 This will be a code ***block***:
 
