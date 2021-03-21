@@ -10,6 +10,7 @@ list_o_start = False
 quote_start = False
 linebreak = False
 for line in input_lines:
+	linebreak = False
 	if not re.search(r'^(-|\*|\+).*', line):
 		if list_start:
 			lines.append('</ul>')
@@ -31,7 +32,7 @@ for line in input_lines:
 				count = i
 				break
 		line = re.sub(r'^#{' + str(count) + '} *', '<h' + str(count) + '>', line) + '</h' + str(count) + '>'
-		line = re.sub(r'#', '', line)
+		line = re.sub(r' *#+', '', line)
 		lines.append(line)
 		linebreak = False
 	# Links
@@ -91,22 +92,8 @@ for line in input_lines:
 		lines.append('<p>' + line + '</p>')
 		if re.search(r'$', line):
 			linebreak = True
-	else:
-		lines.append(line)
-		if re.search(r'$', line):
-			linebreak = True
 
-	if linebreak and line != '':
+	if linebreak:
 		lines.append('<br>')
-	
 
-temp = []
-for line in lines:
-	if line != '':
-		temp.append(line)
-
-#for line in temp:
-#	print(line)
-
-#print('------')
-print(''.join(temp))
+print(''.join(lines))
