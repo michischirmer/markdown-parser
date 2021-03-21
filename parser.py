@@ -5,7 +5,8 @@ if len(sys.argv) < 2 or len(sys.argv) > 3:
 	print('Usage: python parser.py <Input File> (<Output File>)')
 	exit(1)
 
-def parse(input_lines):
+def parse(input):
+	input_lines = input.splitlines()
 	lines = []
 	list_start = False
 	list_o_start = False
@@ -137,7 +138,7 @@ def parse(input_lines):
 
 
 with open(sys.argv[1]) as file:
-	input_lines = file.read().splitlines()
+	input = file.read()
 
 with open(sys.argv[2], 'w') as f:
-	f.write(parse(input_lines))
+	f.write(parse(input))
