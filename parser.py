@@ -153,7 +153,7 @@ def inline_parse(string):
 			if re.search(r'^#{' + str(i) + r'}', string):
 				count = i
 				break
-		line = re.sub(r'^#{' + str(count) + '} *', '<h' + str(count) + '>', string) + '</h' + str(count) + '>'
+		string = re.sub(r'^#{' + str(count) + '} *', '<h' + str(count) + '>', string) + '</h' + str(count) + '>'
 		string = re.sub(r' *#+', '', string)
 		toAdd += string
 		case = False
@@ -170,22 +170,28 @@ def inline_parse(string):
 	# Bold and Italic Text
 	if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', string) or re.search(r'[(.^\*)*]\*{2}.+\*{2}[(.^\*)*]', string):
 		if re.search(r'[(.^_)*]_{2}.+_{2}[(.^_)*]', string):
-			text = re.sub(r'[_]','<em><strong>' , string, 3)
-			text = re.sub(r'[_]','</em></strong>' , text, 3)
+			text = re.sub(r'[_]', '<em><strong>', line, 1)
+			text = re.sub(r'[_]', '', text, 4)
+			text = re.sub(r'[_]', '</em></strong>', text, 1)
 		else:
-			text = re.sub(r'[\*]','<em><strong>' , string, 3)
-			text = re.sub(r'[\*]','</em></strong>' , text, 3)
+			text = re.sub(r'[\*]', '<em><strong>', string, 1)
+			text = re.sub(r'[\*]', '', text, 4)
+			text = re.sub(r'[\*]', '</em></strong>', text, 1)
 		toAdd += text
 		case = False
 
 	# Bold Text
 	elif re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', string) or re.search(r'[(.^\*)*]\*{1}.+\*{1}[(.^\*)*]', string):
 		if re.search(r'[(.^_)*]_{1}.+_{1}[(.^_)*]', string):
-			text = re.sub(r'[_]','<strong>' , string, 2)
-			text = re.sub(r'[_]','</strong>' , text, 2)
+			text = re.sub(r'[_]','<strong>' , string, 1)
+			text = re.sub(r'[_]','' , text, 1)
+			text = re.sub(r'[_]','</strong>' , text, 1)
+			text = re.sub(r'[_]','' , text, 1)
 		else:
-			text = re.sub(r'[\*]','<strong>' , string, 2)
-			text = re.sub(r'[\*]','</strong>' , text, 2)
+			text = re.sub(r'[\*]','<strong>' , string, 1)
+			text = re.sub(r'[\*]','' , text, 1)
+			text = re.sub(r'[\*]','</strong>' , text, 1)
+			text = re.sub(r'[\*]','' , text, 1)
 		toAdd += text
 		case = False
 
