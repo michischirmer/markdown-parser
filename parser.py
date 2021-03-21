@@ -1,6 +1,11 @@
 import re
+import sys
 
-with open('file.md') as file:
+if len(sys.argv) < 2 or len(sys.argv) > 3:
+	print('Usage: python parser.py <Input File> (<Output File>)')
+	exit(1)
+
+with open(sys.argv[1]) as file:
 	input = file.read()
 	input_lines = input.splitlines()
 
@@ -19,7 +24,7 @@ for line in input_lines:
 
 	if not re.search(r'^(\>).*', line):
 		if quote_start:
-			toAdd += '</blockquote>'
+			toAdd += '</p></blockquote>'
 		quote_start = False
 
 	if not re.search(r'^(\d*\.).*', line):
@@ -84,7 +89,7 @@ for line in input_lines:
 	# Quote
 	elif re.search(r'^(\>).*', line):
 		if not quote_start:
-			toAdd += '<blockquote>'
+			toAdd += '<blockquote><p>'
 			quote_start = True
 		toAdd += re.sub(r'[\>] *', '', line)
 
@@ -105,4 +110,6 @@ for line in input_lines:
 	else:
 		lines.append(toAdd)
 
-print('\n'.join(lines))
+output = '\n'.join(lines)
+with open(sys.argv[2], 'w') as f:
+	f.write(output)
