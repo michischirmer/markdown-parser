@@ -17,7 +17,7 @@ def parse(input):
 		toAdd = ''
 		wrapper = False
 
-		if not re.search(r'^(-|\*|\+).*', line):
+		if not re.search(r'^\s*(-|\*|\+).*', line):
 			if list_start:
 				toAdd += '</ul>'
 			list_start = False
@@ -27,7 +27,7 @@ def parse(input):
 				toAdd += '</p></blockquote>'
 			quote_start = False
 
-		if not re.search(r'^(\d*\.).*', line):
+		if not re.search(r'^\s*(\d*\.).*', line):
 			if list_o_start:
 				toAdd += '</ol>'
 			list_o_start = False
@@ -109,11 +109,11 @@ def parse(input):
 
 		
 		# Unordered List
-		if re.search(r'^(-|\+).*', line):
+		if re.search(r'^\s*(-|\+).*', line):
 			if not list_start:
 				toAdd += '<ul>'
 				list_start = True
-			toAdd += re.sub(r'[-|\+] *', '<li>', line)
+			toAdd += re.sub(r'\s*[-|\+] *', '<li>', line)
 
 		# Quote
 		if re.search(r'^(\>).*', line):
@@ -123,11 +123,11 @@ def parse(input):
 			toAdd += re.sub(r'[\>] *', '', line)
 
 		# Ordered List
-		if re.search(r'^(\d*\.).*', line):
+		if re.search(r'^\s*(\d*\.).*', line):
 			if not list_o_start:
 				toAdd += '<ol>'
 				list_o_start = True
-			toAdd += re.sub(r'(\d*\.) *', '<li>', line)
+			toAdd += re.sub(r'\s*(\d*\.) *', '<li>', line)
 
 		if toAdd != '' and wrapper:
 			while toAdd != inline_parse(toAdd):
